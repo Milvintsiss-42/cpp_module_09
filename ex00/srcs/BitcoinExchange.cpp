@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 21:25:19 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/25 11:53:57 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/25 20:49:31 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void BitcoinExchange::init()
 
 		try
 		{
-			std::pair<Date, double> r = parseLine(
+			std::pair<Date, float> r = parseLine(
 				line,
 				",",
 				true,
@@ -68,9 +68,9 @@ void BitcoinExchange::init()
 	}
 }
 
-double BitcoinExchange::getNearestDateExchangeRate(Date const &date) const
+float BitcoinExchange::getNearestDateExchangeRate(Date const &date) const
 {
-	std::map<Date, double>::const_iterator r = this->_exchange_rates.lower_bound(date);
+	std::map<Date, float>::const_iterator r = this->_exchange_rates.lower_bound(date);
 	if (date < r->first && r == this->_exchange_rates.begin())
 		return -1;
 	else if (date < r->first)

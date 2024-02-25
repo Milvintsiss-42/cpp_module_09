@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 21:25:31 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/25 11:44:51 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/25 20:49:31 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@
 
 class BitcoinExchange {
 private:
-	std::map<Date, double> _exchange_rates;
+	std::map<Date, float> _exchange_rates;
 public:
 	BitcoinExchange();
 	BitcoinExchange(BitcoinExchange const &src);
 	~BitcoinExchange();
 
 	void init();
-	double getNearestDateExchangeRate(Date const &date) const;
+	float getNearestDateExchangeRate(Date const &date) const;
 
 	BitcoinExchange &operator=(BitcoinExchange const &rhs);
 

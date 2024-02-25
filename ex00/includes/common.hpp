@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 07:25:00 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/25 09:16:09 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/25 20:49:31 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 #include <limits>
 #include "Date.hpp"
 
-std::pair<Date, double> parseLine(
+std::pair<Date, float> parseLine(
 	std::string const &line,
 	std::string const &delimiter,
 	bool do_accept_0,
-	double max_value);
+	float max_value);
 
 class ParsingError : virtual public std::exception {
 private:

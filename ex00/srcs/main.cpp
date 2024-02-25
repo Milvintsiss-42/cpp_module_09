@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/09 17:36:12 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/25 11:54:39 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/25 20:49:31 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ int main(int argc, char **argv)
 
 		try
 		{
-			std::pair<Date, double> r = parseLine(line, " | ", false, 1000);
-			double exchangeRate =
+			std::pair<Date, float> r = parseLine(line, " | ", false, 1000);
+			float exchangeRate =
 				exchangeDatabase.getNearestDateExchangeRate(r.first);
 			if (exchangeRate >= 0)
 				std::cout << r.first << " => " << r.second << " = "

@@ -6,19 +6,19 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 07:25:10 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/25 10:13:38 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/25 20:49:31 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.hpp"
 
-static bool is_double(std::string const literal);
+static bool is_float(std::string const literal);
 
-std::pair<Date, double> parseLine(
+std::pair<Date, float> parseLine(
 	std::string const &line,
 	std::string const &delimiter,
 	bool do_accept_0,
-	double max_value)
+	float max_value)
 {
 		size_t delimiter_pos = line.find(delimiter);
 		if (delimiter_pos == std::string::npos)
@@ -29,11 +29,11 @@ std::pair<Date, double> parseLine(
 		if (date.getTimestamp() < 0)
 			throw ParsingError("bad input => " + date_string + " => date format or value invalid");
 
-		std::string double_string = line.substr(delimiter_pos + delimiter.length());
-		if (!is_double(double_string))
-			throw ParsingError("bad input => " + double_string + " => invalid value");
-		double value;
-		std::istringstream(double_string) >> value;
+		std::string float_string = line.substr(delimiter_pos + delimiter.length());
+		if (!is_float(float_string))
+			throw ParsingError("bad input => " + float_string + " => invalid value");
+		float value;
+		std::istringstream(float_string) >> value;
 		if (value < 0)
 			throw ParsingError("not a positive number");
 		if (value == 0 && !do_accept_0)
@@ -41,10 +41,10 @@ std::pair<Date, double> parseLine(
 		if (value >= max_value)
 			throw ParsingError("too large a number");
 
-		return std::pair<Date, double>(date, value);
+		return std::pair<Date, float>(date, value);
 }
 
-static bool is_double(std::string const literal)
+static bool is_float(std::string const literal)
 {
 	std::string s(literal);
 	int dot_count = 0;
