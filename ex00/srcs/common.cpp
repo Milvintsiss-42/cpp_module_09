@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 07:25:10 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/25 20:49:31 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/25 22:01:09 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static bool is_float(std::string const literal)
 	int dot_count = 0;
 
 	std::string::const_iterator it = s.begin();
-	if (*it == '-')
+	if (*it == '-' || *it == '+')
 		it++;
     while (it != s.end())
 	{
