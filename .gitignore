@@ -2,3 +2,6 @@
 **/.DS_Store
 **/build
 **/*.o
+ex00/btc
+ex00/data.csv
+ex00/input.txt
