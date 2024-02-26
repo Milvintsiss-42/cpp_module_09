@@ -66,3 +66,11 @@ static bool is_float(std::string const literal)
 		return false;
     return true;
 }
+
+ParsingError::ParsingError(std::string const description)
+	: _description(description) {}
+ParsingError::~ParsingError() throw () {}
+const char *ParsingError::what() const throw()
+{
+	return this->_description.c_str();
+}

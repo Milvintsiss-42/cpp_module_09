@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 07:25:00 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/25 20:49:31 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/26 02:29:41 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,11 @@ std::pair<Date, float> parseLine(
 	bool do_accept_0,
 	float max_value);
 
-class ParsingError : virtual public std::exception {
+class ParsingError : public std::exception {
 private:
 	std::string const _description;
 public:
-	ParsingError(std::string const description) : _description(description) {}
-	virtual ~ParsingError() throw () {}
-	virtual const char *what() const throw()
-	{
-		return this->_description.c_str();
-	}
+	ParsingError(std::string const description);
+	virtual ~ParsingError() throw();
+	virtual const char *what() const throw();
 };

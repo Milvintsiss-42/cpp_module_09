@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 20:18:52 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/26 01:10:58 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/26 02:47:30 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,4 +141,21 @@ RPN &RPN::operator=(RPN const &rhs)
 {
 	this->_exec_stack = rhs._exec_stack;
 	return *this;
+}
+
+const char *RPN::InvalidRPNExpression::what() const throw()
+{
+	return ("InvalidRPNExpression");
+}
+const char *RPN::Overflow::what() const throw()
+{
+	return ("Overflow");
+}
+const char *RPN::DivisionByZero::what() const throw()
+{
+	return ("DivisionByZero");
+}
+const char *RPN::TopOnEmptyStack::what() const throw()
+{
+	return ("TopOnEmptyStack");
 }

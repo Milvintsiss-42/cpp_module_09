@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 20:19:07 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/26 01:07:15 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/26 02:49:36 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,30 +39,18 @@ public:
 
 	class InvalidRPNExpression : public std::exception {
 	public:
-		virtual const char *what() const throw()
-		{
-			return ("InvalidRPNExpression");
-		}
+		virtual const char *what() const throw();
 	};
 	class Overflow : public std::exception {
 	public:
-		virtual const char *what() const throw()
-		{
-			return ("Overflow");
-		}
+		virtual const char *what() const throw();
 	};
 	class DivisionByZero : public std::exception {
 	public:
-		virtual const char *what() const throw()
-		{
-			return ("DivisionByZero");
-		}
+		virtual const char *what() const throw();
 	};
 	class TopOnEmptyStack : public std::exception {
 	public:
-		virtual const char *what() const throw()
-		{
-			return ("TopOnEmptyStack");
-		}
+		virtual const char *what() const throw();
 	};
 };
