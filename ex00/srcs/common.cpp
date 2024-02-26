@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 07:25:10 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/25 22:01:09 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/26 02:32:15 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ std::pair<Date, float> parseLine(
 		std::string date_string = line.substr(0, delimiter_pos);
 		Date date(date_string);
 		if (date.getTimestamp() < 0)
-			throw ParsingError("bad input => " + date_string + " => date format or value invalid");
+			throw ParsingError("bad input => \"" + date_string + "\" => date format or value invalid");
 
 		std::string float_string = line.substr(delimiter_pos + delimiter.length());
 		if (!is_float(float_string))
-			throw ParsingError("bad input => " + float_string + " => invalid value");
+			throw ParsingError("bad input => \"" + float_string + "\" => invalid value");
 		float value;
 		std::istringstream(float_string) >> value;
 		if (value < 0)
