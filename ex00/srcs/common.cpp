@@ -46,6 +46,8 @@ std::pair<Date, float> parseLine(
 
 static bool is_float(std::string const literal)
 {
+	if (literal.empty())
+		return false;
 	std::string s(literal);
 	int dot_count = 0;
 
