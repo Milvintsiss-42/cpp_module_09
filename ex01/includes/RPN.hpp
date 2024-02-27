@@ -6,18 +6,19 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 20:19:07 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/26 02:49:36 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/26 05:25:19 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <stack>
+#include <list>
 #include <string>
 
 class RPN {
 private:
-	std::stack<int> _exec_stack;
+	std::stack<int, std::list<int> > _exec_stack;
 
 	void _execOperation(char c);
 	void _getOperands(int &a, int &b);
