@@ -6,7 +6,7 @@
 #    By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/29 15:36:23 by ple-stra          #+#    #+#              #
-#    Updated: 2024/02/26 19:53:44 by ple-stra         ###   ########.fr        #
+#    Updated: 2024/02/27 22:24:43 by ple-stra         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,9 @@ ifneq (nWerror, $(filter nWerror,$(MAKECMDGOALS)))
 endif
 ifeq (sanitize, $(filter sanitize,$(MAKECMDGOALS)))
 	CFLAGS 	+= -fsanitize=address
+endif
+ifeq (g, $(filter g,$(MAKECMDGOALS)))
+	CFLAGS 	+= -g
 endif
 ifeq (g3, $(filter g3,$(MAKECMDGOALS)))
 	CFLAGS 	+= -g3
@@ -59,6 +62,8 @@ nWerror		:
 			@echo "WARN: Compiling without Werror flag!"
 sanitize	:
 			@echo "WARN: Compiling with fsanitize flag!"
+g			:
+			@echo "WARN: Compiling with g flag!"
 g3			:
 			@echo "WARN: Compiling with g3 flag!"
 debug		:
@@ -66,4 +71,4 @@ debug		:
 
 .PHONY: \
  all clean fclean re\
- nWerror sanitize debug g3
+ nWerror sanitize debug g g3
