@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 07:20:00 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/27 09:40:37 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/27 16:58:07 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@ public:
 		return *this;
 	}
 	typename Iterator::value_type &operator*()
+	{
+		return *(this->_it + this->_size - 1);
+	}
+	typename Iterator::value_type operator*() const
 	{
 		return *(this->_it + this->_size - 1);
 	}
@@ -89,6 +93,13 @@ size_t operator-(
 	GroupIterator<Iterator> const &rhs)
 {
     return (lhs.base() - rhs.base()) / lhs.size();
+}
+template<typename T, typename Iterator>
+bool operator<(
+	T const &lhs,
+	GroupIterator<Iterator> const &rhs)
+{
+    return lhs < *rhs;
 }
 
 template<typename Iterator>

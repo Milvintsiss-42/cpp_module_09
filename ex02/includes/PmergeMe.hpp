@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 02:18:51 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/27 11:46:33 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/27 18:03:18 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,13 @@
 #include <algorithm>
 #include "GroupIterator.hpp"
 #include "common.hpp"
+
+#define FContainer Container<Value, std::allocator<Value> >
+#define FGroupIterator GroupIterator<typename FContainer::iterator>
+#define FGIContainer Container<FGroupIterator, std::allocator<FGroupIterator > >
+#define FGIContIterContainer Container<typename FGIContainer::iterator, std::allocator<typename FGIContainer::iterator > >
+
+typedef long unsigned int ulint_t;
 
 class PmergeMe {
 private:
@@ -37,31 +44,50 @@ public:
 	PmergeMe(PmergeMe const &src);
 	~PmergeMe();
 
-	template<typename Iterator>
+	template<template<typename, typename> class Container, typename Value>
 	static void base_sort(
-		GroupIterator<Iterator> first,
-		GroupIterator<Iterator> last);
+		FGroupIterator first,
+		FGroupIterator last);
 
-	template<typename Container>
-	static void sort(Container &seq);
+
+	template<template<typename, typename> class Container, typename Value>
+	static void sort(FContainer &seq);
 
 	PmergeMe &operator=(PmergeMe const &rhs);
 };
 
-template<typename Container>
-void PmergeMe::sort(Container &seq)
+template<template<typename, typename> class Container, typename Value>
+void PmergeMe::sort(FContainer &seq)
 {
-	base_sort(
-		GroupIterator<typename Container::iterator>(seq.begin(), 1),
-		GroupIterator<typename Container::iterator>(seq.end(), 1)
+	base_sort<Container, Value>(
+		FGroupIterator(seq.begin(), 1),
+		FGroupIterator(seq.end(), 1)
 	);
 }
 
-template<typename Iterator>
+template<template<typename, typename> class Container, typename Value>
 void PmergeMe::base_sort(
-	GroupIterator<Iterator> first,
-	GroupIterator<Iterator> last)
+	FGroupIterator first,
+	FGroupIterator last)
 {
+	// Cache all the differences between a Jacobsthal number and its
+    // predecessor that fit in 64 bits, starting with the difference
+    // between the Jacobsthal numbers 4 and 3 (the previous ones are
+    // unneeded)
+    static const ulint_t jacobsthal_diff[] = {
+        2u, 2u, 6u, 10u, 22u, 42u, 86u, 170u, 342u, 682u, 1366u,
+        2730u, 5462u, 10922u, 21846u, 43690u, 87382u, 174762u, 349526u, 699050u,
+        1398102u, 2796202u, 5592406u, 11184810u, 22369622u, 44739242u, 89478486u,
+        178956970u, 357913942u, 715827882u, 1431655766u, 2863311530u, 5726623062u,
+        11453246122u, 22906492246u, 45812984490u, 91625968982u, 183251937962u,
+        366503875926u, 733007751850u, 1466015503702u, 2932031007402u, 5864062014806u,
+        11728124029610u, 23456248059222u, 46912496118442u, 93824992236886u, 187649984473770u,
+        375299968947542u, 750599937895082u, 1501199875790165u, 3002399751580331u,
+        6004799503160661u, 12009599006321322u, 24019198012642644u, 48038396025285288u,
+        96076792050570576u, 192153584101141152u, 384307168202282304u, 768614336404564608u,
+        1537228672809129216u, 3074457345618258432u, 6148914691236516864u
+    };
+
 	size_t size = last - first;
 	bool has_stray_element = size % 2;
 	if (size < 2)
@@ -69,21 +95,84 @@ void PmergeMe::base_sort(
 	if (KDEBUG)
 		_dprint_before(first, last);
 
-	GroupIterator<Iterator> it = first;
-	GroupIterator<Iterator> itend = it + size;
+	FGroupIterator itend = first + size;
 	if (has_stray_element)
 		itend--;
-	for (; it != itend; it += 2)
+	for (FGroupIterator it = first; it != itend; it += 2)
 	{
 		if (*it > *(it + 1))
 			iter_swap(it, it + 1);
 	}
 	if (KDEBUG)
 		_dprint_after(first, last);
-	base_sort(
-		GroupIterator<Iterator>(first.base(), first.size() * 2),
-		GroupIterator<Iterator>(last.base(), last.size() * 2)
+	base_sort<Container, Value>(
+		FGroupIterator(first.base(), first.size() * 2),
+		FGroupIterator(last.base(), last.size() * 2)
 	);
+
+	FGIContainer chain;
+	chain.push_back(first);
+	chain.push_back(first + 1);
+
+	FGIContIterContainer pend;
+
+	for (FGroupIterator it = first + 2; it != itend; it += 2)
+	{
+		pend.push_back(chain.insert(chain.end(), it + 1));
+	}
+
+	if (has_stray_element)
+		pend.push_back(chain.end());
+
+	FGroupIterator current_it = first + 2;
+	typename FGIContIterContainer::iterator current_pend = pend.begin();
+
+	for (int k = 0; ; ++k)
+	{
+		// typedef std::common_type_t<
+		// 	std::uint_fast64_t,
+		// 	typename FGIContainer::difference_type
+		// 	> size_type;
+
+		ulint_t dist = jacobsthal_diff[k];
+		if (dist > static_cast<ulint_t>(pend.end() - current_pend))
+			break;
+
+		FGroupIterator it = current_it + dist * 2;
+		typename FGIContIterContainer::iterator pe = current_pend + dist;
+
+		do
+		{
+			--pe;
+			it -= 2;
+
+			typename FGIContainer::iterator insertion_point
+				= std::upper_bound(chain.begin(), *pe, *it);
+			chain.insert(insertion_point, it);
+		} while (pe != current_pend);
+
+		current_it += dist * 2;
+		current_pend += dist;
+	}
+
+	while (current_pend != pend.end())
+	{
+		typename FGIContainer::iterator insertion_point
+			= std::upper_bound(chain.begin(), *current_pend, *current_it);
+		chain.insert(insertion_point, current_it);
+		current_it += 2;
+		current_pend++;
+	}
+
+	FContainer cache;
+	for (typename FGIContainer::iterator it = chain.begin(); it != chain.end(); it++)
+	{
+		typename FContainer::iterator begin = (*it).base();
+		typename FContainer::iterator end = begin + (*it).size();
+		std::copy(begin, end, std::back_inserter(cache));
+	}
+	std::copy(cache.begin(), cache.end(), first.base());
+	_dprint_after(first, last);
 }
 
 template<typename Iterator>
