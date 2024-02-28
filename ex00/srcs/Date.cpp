@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 04:34:41 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/25 11:54:27 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 19:42:59 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,8 @@ static time_t parseDate(std::string const &datetimeString)
     strptime(datetimeString.c_str(), "%Y-%m-%d", &tmStruct);
 	time_t timestamp = mktime(&tmStruct); // also normalize tmStruct
 	if (!isDateValid(datetimeString, tmStruct))
+		return -1;
+	if (timestamp > time(NULL))
 		return -1;
     return timestamp;
 }
