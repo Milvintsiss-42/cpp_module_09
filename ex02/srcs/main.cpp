@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/09 17:36:12 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/27 11:47:30 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 05:31:04 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 
 int main(int argc, char **argv)
 {
+	int rvalue = 0;
+
 	if (argc < 2)
 	{
 		std::cerr << "Usage: ./PmergeMe [positive integer sequence]" << std::endl;
@@ -46,10 +48,15 @@ int main(int argc, char **argv)
 	printProcessTime("deque", dseq.size(),
 		getProcessTimeInMicro(deq_start_time, deq_end_time));
 
-	if (!areContainersEqual(vseq, dseq))
+	if (!is_sorted(vseq))
 	{
-		std::cerr << "Containers are not equal !" << std::endl;
-		return -1;
+		std::cerr << "Vector is not sorted!" << std::endl;
+		rvalue = -1;
 	}
-	return 0;
+	if (!is_sorted(dseq))
+	{
+		std::cerr << "Deque is not sorted!" << std::endl;
+		rvalue = -1;
+	}
+	return rvalue;
 }

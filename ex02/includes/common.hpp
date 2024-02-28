@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 19:44:49 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/27 11:35:53 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 05:27:47 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,11 @@ std::ostream &operator<<(std::ostream & o, std::deque<int> const & rhs);
 long getProcessTimeInMicro(struct timeval start_time, struct timeval end_time);
 void printProcessTime(std::string const &container_name, size_t size, long process_time);
 
-bool areContainersEqual(std::vector<int> const &vec, std::deque<int> const &deq);
+template<typename Container>
+bool is_sorted(Container const &container)
+{
+	Container newContainer(container);
+
+	sort(newContainer.begin(), newContainer.end());
+	return container == newContainer;
+}
