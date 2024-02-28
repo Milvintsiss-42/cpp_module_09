@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 19:46:43 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/27 11:47:16 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 18:16:59 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 static bool is_positive_int(std::string const &int_string)
 {
+	if (int_string.empty())
+		return false;
     std::string::const_iterator it = int_string.begin();
 	if (*it == '+')
 		it++;
