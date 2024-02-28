@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/09 17:36:12 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/28 05:31:04 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 08:29:07 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,11 @@ int main(int argc, char **argv)
 	printProcessTime("deque", dseq.size(),
 		getProcessTimeInMicro(deq_start_time, deq_end_time));
 
+	if (!areContainersEqual(vseq, dseq))
+	{
+		std::cerr << "Containers are not equal !" << std::endl;
+		rvalue = -1;
+	}
 	if (!is_sorted(vseq))
 	{
 		std::cerr << "Vector is not sorted!" << std::endl;
