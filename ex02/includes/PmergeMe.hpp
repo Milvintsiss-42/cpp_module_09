@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 02:18:51 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/28 03:53:43 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 04:57:16 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,9 +189,18 @@ void PmergeMe::base_sort(
 	{
 		typename FContainer::iterator begin = (*it).base();
 		typename FContainer::iterator end = begin + (*it).size();
-		std::copy(begin, end, std::back_inserter(cache));
+		while (begin != end)
+		{
+			cache.push_back(*begin);
+			begin++;
+		}
 	}
-	std::copy(cache.begin(), cache.end(), first.base());
+	typename FContainer::iterator it_main = first.base();
+	for (typename FContainer::iterator it = cache.begin(); it != cache.end(); it++)
+	{
+		*it_main = *it;
+		it_main++;
+	}
 	if (KDEBUG)
 		_dprint_after(first, last);
 }
