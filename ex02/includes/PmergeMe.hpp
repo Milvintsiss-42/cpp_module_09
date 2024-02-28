@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 02:18:51 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/28 18:07:40 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 18:30:44 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ private:
 	template<template<typename, typename> class Container, typename Value>
 	static void _dprint_FGIContainer(std::string const &name, FGIContainer &container);
 	template<template<typename, typename> class Container, typename Value>
-	static void _merge_insert(
+	static void _binary_insert(
 		FGIContainer &r,
 		typename FGIContainer::iterator &to_insert);
 
@@ -153,7 +153,7 @@ void PmergeMe::base_sort(
 				_dprint_FGIContainer<Container, Value>("Sorted", sorted);
 				std::cout << "Trying to insert: " << *(*to_insert) << std::endl;
 			}
-			_merge_insert<Container, Value>(sorted, to_insert);
+			_binary_insert<Container, Value>(sorted, to_insert);
 		}
 	}
 
@@ -162,7 +162,7 @@ void PmergeMe::base_sort(
 		FGIContainer tmp;
 		tmp.push_back(last - 1);
 		typename FGIContainer::iterator to_insert = tmp.begin();
-		_merge_insert<Container, Value>(sorted, to_insert);
+		_binary_insert<Container, Value>(sorted, to_insert);
 	}
 
 	if (KDEBUG)
@@ -196,7 +196,7 @@ void PmergeMe::base_sort(
 }
 
 template<template<typename, typename> class Container, typename Value>
-void PmergeMe::_merge_insert(
+void PmergeMe::_binary_insert(
 	FGIContainer &r,
 	typename FGIContainer::iterator &to_insert)
 {
