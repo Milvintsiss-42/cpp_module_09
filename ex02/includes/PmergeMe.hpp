@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 02:18:51 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/28 17:42:19 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 17:58:12 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,14 @@ void PmergeMe::base_sort(
 		}
 	}
 
+	if (has_stray_element)
+	{
+		FGIContainer tmp;
+		tmp.push_back(last - 1);
+		typename FGIContainer::iterator to_insert = tmp.begin();
+		_merge_insert<Container, Value>(sorted, to_insert);
+	}
+
 	if (KDEBUG)
 	{
 		_dprint_FGIContainer<Container, Value>("Sorted", sorted);
@@ -270,7 +278,7 @@ void PmergeMe::_dprint_pairs(
 		std::cout << "[" << *it << " " << *(it + 1) << "] - ";
 	}
 	if (has_stray_element)
-		std::cout << "+stray= " << std::vector<int>(first.base() + first.size() * 2 * (size / 2), last.base());
+		std::cout << "+stray= " << *(last - 1);
 	std::cout << std::endl;
 }
 
