@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 02:18:51 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/27 18:03:18 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 03:53:43 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,35 +105,49 @@ void PmergeMe::base_sort(
 	}
 	if (KDEBUG)
 		_dprint_after(first, last);
+
 	base_sort<Container, Value>(
 		FGroupIterator(first.base(), first.size() * 2),
 		FGroupIterator(last.base(), last.size() * 2)
 	);
 
+    ////////////////////////////////////////////////////////////
+    // Separate main chain and pend elements
+
+    // The first pend element is always part of the main chain,
+    // so we can safely initialize the list with the first two
+    // elements of the sequence
 	FGIContainer chain;
 	chain.push_back(first);
 	chain.push_back(first + 1);
 
+    // Upper bounds for the insertion of pend elements
 	FGIContIterContainer pend;
 
+	// We insert all highest values in the main chain
 	for (FGroupIterator it = first + 2; it != itend; it += 2)
 	{
-		pend.push_back(chain.insert(chain.end(), it + 1));
+		typename FGIContainer::iterator tmp = chain.insert(chain.end(), it + 1);
+		pend.push_back(tmp);
 	}
 
+    // Add the last element to pend if it exists; when it
+    // exists, it always has to be inserted in the full chain,
+    // so giving it chain.end() as end insertion point is ok
 	if (has_stray_element)
 		pend.push_back(chain.end());
 
+    ////////////////////////////////////////////////////////////
+    // Binary insertion into the main chain
 	FGroupIterator current_it = first + 2;
 	typename FGIContIterContainer::iterator current_pend = pend.begin();
 
 	for (int k = 0; ; ++k)
 	{
-		// typedef std::common_type_t<
-		// 	std::uint_fast64_t,
-		// 	typename FGIContainer::difference_type
-		// 	> size_type;
+        // Should be safe: in this code, (pend.end() - current_pend) should always return
+        // a positive number, so there is no risk of comparing funny values
 
+		// Find next index
 		ulint_t dist = jacobsthal_diff[k];
 		if (dist > static_cast<ulint_t>(pend.end() - current_pend))
 			break;
@@ -155,6 +169,9 @@ void PmergeMe::base_sort(
 		current_pend += dist;
 	}
 
+    // If there are pend elements left, insert them into
+    // the main chain, the order of insertion does not
+    // matter so forward traversal is ok
 	while (current_pend != pend.end())
 	{
 		typename FGIContainer::iterator insertion_point
@@ -164,6 +181,9 @@ void PmergeMe::base_sort(
 		current_pend++;
 	}
 
+
+    ////////////////////////////////////////////////////////////
+    // Move values in order to a cache then back to origin
 	FContainer cache;
 	for (typename FGIContainer::iterator it = chain.begin(); it != chain.end(); it++)
 	{
@@ -172,7 +192,8 @@ void PmergeMe::base_sort(
 		std::copy(begin, end, std::back_inserter(cache));
 	}
 	std::copy(cache.begin(), cache.end(), first.base());
-	_dprint_after(first, last);
+	if (KDEBUG)
+		_dprint_after(first, last);
 }
 
 template<typename Iterator>
@@ -206,11 +227,10 @@ void PmergeMe::_dprint_elements(
 	size_t size = last - first;
 	bool has_stray_element = size % 2;
 
-	GroupIterator<Iterator> it = first;
-	GroupIterator<Iterator> itend = it + size;
+	GroupIterator<Iterator> itend = first + size;
 	if (has_stray_element)
 		itend--;
-	for (; it != itend; it += 2)
+	for (GroupIterator<Iterator> it = first; it != itend; it += 2)
 	{
 		std::cout << "[" << *it << " " << *(it + 1) << "] - ";
 	}
