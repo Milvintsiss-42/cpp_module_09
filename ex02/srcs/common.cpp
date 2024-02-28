@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 19:46:43 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/28 18:16:59 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 19:31:48 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ bool parseSequence(std::vector<int> &rseq, char **unparsed_seq, int elements_cou
 	{
 		if (!is_positive_int(*unparsed_seq))
 		{
-			std::cerr << "Error: invalid value \"" << *unparsed_seq << "\"" << std::endl;
+			std::cout << "Error: invalid value \"" << *unparsed_seq << "\"" << std::endl;
 			return false;
 		}
 		int i;
@@ -38,7 +38,7 @@ bool parseSequence(std::vector<int> &rseq, char **unparsed_seq, int elements_cou
 		ss >> i;
 		if (ss.fail())
 		{
-			std::cerr << "Error: unable to parse value \"" << *unparsed_seq << "\" (maybe overflow ?)." << std::endl;
+			std::cout << "Error: unable to parse value \"" << *unparsed_seq << "\" (maybe overflow ?)." << std::endl;
 			return false;
 		}
 		rseq.push_back(i);

@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/09 17:36:12 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/28 19:28:35 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 19:32:12 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 
 	if (argc < 2)
 	{
-		std::cerr << "Usage: ./PmergeMe [positive integer sequence]" << std::endl;
+		std::cout << "Usage: ./PmergeMe [positive integer sequence]" << std::endl;
 		return -1;
 	}
 	std::vector<int> vseq;
@@ -54,17 +54,17 @@ int main(int argc, char **argv)
 
 	if (!areContainersEqual(vseq, dseq))
 	{
-		std::cerr << "Containers are not equal !" << std::endl;
+		std::cout << "Containers are not equal !" << std::endl;
 		rvalue = -1;
 	}
 	if (!is_sorted(vseq))
 	{
-		std::cerr << "Vector is not sorted!" << std::endl;
+		std::cout << "Vector is not sorted!" << std::endl;
 		rvalue = -1;
 	}
 	if (!is_sorted(dseq))
 	{
-		std::cerr << "Deque is not sorted!" << std::endl;
+		std::cout << "Deque is not sorted!" << std::endl;
 		rvalue = -1;
 	}
 	return rvalue;
