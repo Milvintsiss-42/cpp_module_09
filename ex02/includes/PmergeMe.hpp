@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 02:18:51 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/28 17:58:12 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 18:07:40 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,12 +174,8 @@ void PmergeMe::base_sort(
 	FContainer cache;
 	for (typename FGIContainer::iterator it = sorted.begin(); it != sorted.end(); it++)
 	{
-		if (KDEBUG)
-			std::cout << "Sorted num: " << *(*it) << std::endl;
 		typename FContainer::iterator seg_begin = (*it).base();
 		typename FContainer::iterator seg_end = seg_begin + (*it).size();
-		if (KDEBUG)
-			std::cout << "Seg: " << std::vector<Value>(seg_begin, seg_end) << std::endl;
 		for (typename FContainer::iterator seg_it = seg_begin; seg_it != seg_end; seg_it++)
 		{
 			cache.push_back(*seg_it);
