@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/09 17:36:12 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/28 08:29:07 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:36:28 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,13 @@ int main(int argc, char **argv)
 
 	struct timeval vec_start_time, vec_end_time, deq_start_time, deq_end_time;
     gettimeofday(&vec_start_time, NULL);
+	if (KDEBUG)
+		std::cerr << "Vector" << std::endl;
 	PmergeMe::sort(vseq);
     gettimeofday(&vec_end_time, NULL);
     gettimeofday(&deq_start_time, NULL);
+	if (KDEBUG)
+		std::cerr << "Deque" << std::endl;
 	PmergeMe::sort(dseq);
     gettimeofday(&deq_end_time, NULL);
 

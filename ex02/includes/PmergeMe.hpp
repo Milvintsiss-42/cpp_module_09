@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 02:18:51 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/28 04:57:16 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/02/28 17:42:19 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,16 @@ private:
 		GroupIterator<Iterator> first,
 		GroupIterator<Iterator> last);
 	template<typename Iterator>
-	static void _dprint_elements(
+	static void _dprint_pairs(
 		GroupIterator<Iterator> first,
 		GroupIterator<Iterator> last);
+	template<template<typename, typename> class Container, typename Value>
+	static void _dprint_FGIContainer(std::string const &name, FGIContainer &container);
+	template<template<typename, typename> class Container, typename Value>
+	static void _merge_insert(
+		FGIContainer &r,
+		typename FGIContainer::iterator &to_insert);
+
 public:
 	PmergeMe();
 	PmergeMe(PmergeMe const &src);
@@ -48,7 +55,6 @@ public:
 	static void base_sort(
 		FGroupIterator first,
 		FGroupIterator last);
-
 
 	template<template<typename, typename> class Container, typename Value>
 	static void sort(FContainer &seq);
@@ -70,22 +76,12 @@ void PmergeMe::base_sort(
 	FGroupIterator first,
 	FGroupIterator last)
 {
-	// Cache all the differences between a Jacobsthal number and its
-    // predecessor that fit in 64 bits, starting with the difference
-    // between the Jacobsthal numbers 4 and 3 (the previous ones are
-    // unneeded)
-    static const ulint_t jacobsthal_diff[] = {
-        2u, 2u, 6u, 10u, 22u, 42u, 86u, 170u, 342u, 682u, 1366u,
-        2730u, 5462u, 10922u, 21846u, 43690u, 87382u, 174762u, 349526u, 699050u,
-        1398102u, 2796202u, 5592406u, 11184810u, 22369622u, 44739242u, 89478486u,
-        178956970u, 357913942u, 715827882u, 1431655766u, 2863311530u, 5726623062u,
-        11453246122u, 22906492246u, 45812984490u, 91625968982u, 183251937962u,
-        366503875926u, 733007751850u, 1466015503702u, 2932031007402u, 5864062014806u,
-        11728124029610u, 23456248059222u, 46912496118442u, 93824992236886u, 187649984473770u,
-        375299968947542u, 750599937895082u, 1501199875790165u, 3002399751580331u,
-        6004799503160661u, 12009599006321322u, 24019198012642644u, 48038396025285288u,
-        96076792050570576u, 192153584101141152u, 384307168202282304u, 768614336404564608u,
-        1537228672809129216u, 3074457345618258432u, 6148914691236516864u
+    static const ulint_t jacobsthal_suit[] = {
+		1u, 1u, 3u, 5u, 11u, 21u, 43u, 85u, 171u, 341u, 683u, 1365u, 2731u, 5461u,
+		10923u, 21845u, 43691u, 87381u, 174763u, 349525u, 699051u, 1398101u,
+		2796203u, 5592405u, 11184811u, 22369621u, 44739243u, 89478485u,
+		178956971u, 357913941u, 715827883u, 1431655765u, 2863311531u,
+		5726623061u, 11453246123u
     };
 
 	size_t size = last - first;
@@ -108,101 +104,131 @@ void PmergeMe::base_sort(
 
 	base_sort<Container, Value>(
 		FGroupIterator(first.base(), first.size() * 2),
-		FGroupIterator(last.base(), last.size() * 2)
+		FGroupIterator(itend.base(), itend.size() * 2)
 	);
 
-    ////////////////////////////////////////////////////////////
-    // Separate main chain and pend elements
-
-    // The first pend element is always part of the main chain,
-    // so we can safely initialize the list with the first two
-    // elements of the sequence
-	FGIContainer chain;
-	chain.push_back(first);
-	chain.push_back(first + 1);
-
-    // Upper bounds for the insertion of pend elements
-	FGIContIterContainer pend;
-
-	// We insert all highest values in the main chain
-	for (FGroupIterator it = first + 2; it != itend; it += 2)
+	FGIContainer bigs;
+	FGIContainer smalls;
+	FGIContainer sorted;
+	for (FGroupIterator it = first; it != itend; it += 2)
 	{
-		typename FGIContainer::iterator tmp = chain.insert(chain.end(), it + 1);
-		pend.push_back(tmp);
+		smalls.push_back(it);
+		bigs.push_back(it + 1);
+	}
+	sorted.push_back(*smalls.begin());
+	sorted.insert(sorted.end(), bigs.begin(), bigs.end());
+
+	if (KDEBUG)
+	{
+		_dprint_FGIContainer<Container, Value>("Smalls", smalls);
+		_dprint_FGIContainer<Container, Value>("Bigs", bigs);
+		_dprint_FGIContainer<Container, Value>("Sorted", sorted);
 	}
 
-    // Add the last element to pend if it exists; when it
-    // exists, it always has to be inserted in the full chain,
-    // so giving it chain.end() as end insertion point is ok
-	if (has_stray_element)
-		pend.push_back(chain.end());
-
-    ////////////////////////////////////////////////////////////
-    // Binary insertion into the main chain
-	FGroupIterator current_it = first + 2;
-	typename FGIContIterContainer::iterator current_pend = pend.begin();
-
-	for (int k = 0; ; ++k)
+	bool is_first_iter = true;
+	for (int k = 1; ; k++)
 	{
-        // Should be safe: in this code, (pend.end() - current_pend) should always return
-        // a positive number, so there is no risk of comparing funny values
+		ulint_t magic = jacobsthal_suit[k];
+		ulint_t magic_minus1 = jacobsthal_suit[k - 1];
 
-		// Find next index
-		ulint_t dist = jacobsthal_diff[k];
-		if (dist > static_cast<ulint_t>(pend.end() - current_pend))
+		if (KDEBUG)
+		{
+			std::cout << "Magic: " << magic << std::endl;
+			std::cout << "Magic_minus1: " << magic_minus1 << std::endl;
+		}
+
+		if (magic_minus1 > smalls.size() - 1)
 			break;
 
-		FGroupIterator it = current_it + dist * 2;
-		typename FGIContIterContainer::iterator pe = current_pend + dist;
+		if (magic > smalls.size() - 1)
+			magic = smalls.size() - 1;
 
-		do
+		for (; magic > magic_minus1 || (magic == 1 && is_first_iter); magic--)
 		{
-			--pe;
-			it -= 2;
-
-			typename FGIContainer::iterator insertion_point
-				= std::upper_bound(chain.begin(), *pe, *it);
-			chain.insert(insertion_point, it);
-		} while (pe != current_pend);
-
-		current_it += dist * 2;
-		current_pend += dist;
-	}
-
-    // If there are pend elements left, insert them into
-    // the main chain, the order of insertion does not
-    // matter so forward traversal is ok
-	while (current_pend != pend.end())
-	{
-		typename FGIContainer::iterator insertion_point
-			= std::upper_bound(chain.begin(), *current_pend, *current_it);
-		chain.insert(insertion_point, current_it);
-		current_it += 2;
-		current_pend++;
-	}
-
-
-    ////////////////////////////////////////////////////////////
-    // Move values in order to a cache then back to origin
-	FContainer cache;
-	for (typename FGIContainer::iterator it = chain.begin(); it != chain.end(); it++)
-	{
-		typename FContainer::iterator begin = (*it).base();
-		typename FContainer::iterator end = begin + (*it).size();
-		while (begin != end)
-		{
-			cache.push_back(*begin);
-			begin++;
+			is_first_iter = false;
+			typename FGIContainer::iterator to_insert = smalls.begin() + magic;
+			if (KDEBUG)
+			{
+				std::cout << "Iter: ";
+				_dprint_FGIContainer<Container, Value>("Sorted", sorted);
+				std::cout << "Trying to insert: " << *(*to_insert) << std::endl;
+			}
+			_merge_insert<Container, Value>(sorted, to_insert);
 		}
 	}
-	typename FContainer::iterator it_main = first.base();
-	for (typename FContainer::iterator it = cache.begin(); it != cache.end(); it++)
-	{
-		*it_main = *it;
-		it_main++;
-	}
+
 	if (KDEBUG)
+	{
+		_dprint_FGIContainer<Container, Value>("Sorted", sorted);
+	}
+
+	// Copy `sorted` in base container
+	FContainer cache;
+	for (typename FGIContainer::iterator it = sorted.begin(); it != sorted.end(); it++)
+	{
+		if (KDEBUG)
+			std::cout << "Sorted num: " << *(*it) << std::endl;
+		typename FContainer::iterator seg_begin = (*it).base();
+		typename FContainer::iterator seg_end = seg_begin + (*it).size();
+		if (KDEBUG)
+			std::cout << "Seg: " << std::vector<Value>(seg_begin, seg_end) << std::endl;
+		for (typename FContainer::iterator seg_it = seg_begin; seg_it != seg_end; seg_it++)
+		{
+			cache.push_back(*seg_it);
+		}
+	}
+	typename FContainer::iterator base_it = first.base();
+	for (typename FContainer::iterator cache_it = cache.begin(); cache_it != cache.end(); cache_it++)
+	{
+		*base_it = *cache_it;
+		base_it++;
+	}
+
+	if (KDEBUG)
+	{
 		_dprint_after(first, last);
+		std::cout << std::endl;
+	}
+}
+
+template<template<typename, typename> class Container, typename Value>
+void PmergeMe::_merge_insert(
+	FGIContainer &r,
+	typename FGIContainer::iterator &to_insert)
+{
+
+	typename FGIContainer::iterator begin = r.begin();
+	typename FGIContainer::iterator end = r.end();
+	typename FGIContainer::iterator middle = begin + (end - begin) / 2;
+	while (true)
+	{
+		if (*(*to_insert) < *(*middle))
+		{
+			if (middle - begin == 0)
+			{
+				r.insert(begin, *to_insert);
+				break;
+			}
+			else
+			{
+				end = middle;
+				middle = begin + (end - begin) / 2;
+			}
+		}
+		else
+		{
+			if (end - middle == 1)
+			{
+				r.insert(end, *to_insert);
+				break;
+			}
+			else
+			{
+				begin = middle + 1;
+				middle = begin + (end - begin) / 2;
+			}
+		}
+	}
 }
 
 template<typename Iterator>
@@ -215,7 +241,7 @@ void PmergeMe::_dprint_before(
 	std::cout << "Pairs count: " << size / 2 << std::endl;
 	std::cout << "Has stray element: " << (size % 2 ? "Yes" : "No") << std::endl;
 	std::cout << "Before: ";
-	_dprint_elements(first, last);
+	_dprint_pairs(first, last);
 }
 
 template<typename Iterator>
@@ -224,12 +250,12 @@ void PmergeMe::_dprint_after(
 	GroupIterator<Iterator> last)
 {
 	std::cout << "After: ";
-	_dprint_elements(first, last);
+	_dprint_pairs(first, last);
 	std::cout << "Seq: " << std::vector<int>(first.base(), last.base()) << std::endl;
 }
 
 template<typename Iterator>
-void PmergeMe::_dprint_elements(
+void PmergeMe::_dprint_pairs(
 	GroupIterator<Iterator> first,
 	GroupIterator<Iterator> last)
 {
@@ -245,5 +271,16 @@ void PmergeMe::_dprint_elements(
 	}
 	if (has_stray_element)
 		std::cout << "+stray= " << std::vector<int>(first.base() + first.size() * 2 * (size / 2), last.base());
+	std::cout << std::endl;
+}
+
+template<template<typename, typename> class Container, typename Value>
+void PmergeMe::_dprint_FGIContainer(std::string const &name, FGIContainer &container)
+{
+	std::cout << name << ":";
+	for (typename FGIContainer::iterator it = container.begin(); it != container.end(); it++)
+	{
+		std::cout << " " << *(*it);
+	}
 	std::cout << std::endl;
 }
