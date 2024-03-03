@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 20:18:52 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/26 02:47:30 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/03/03 14:52:20 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,20 +32,19 @@ void RPN::evaluateExpression(std::string const &expr)
 	std::string::const_iterator it = expr.begin();
 	while (it != expr.end())
 	{
-		if (*it == ' ')
+		if (it + 1 == expr.end() || *(it + 1) == ' ')
 		{
-			if (it == expr.begin() || it + 1 == expr.end()
-				|| *(it - 1) == ' ' || *(it + 1) == ' ')
-				throw RPN::InvalidRPNExpression();
+			if (std::isdigit(*it))
+			{
+				if (it + 1 != expr.end() && *(it + 1) != ' ')
+					throw RPN::InvalidRPNExpression();
+				this->_exec_stack.push(*it - '0');
+			}
+			else
+				_execOperation(*it);
 		}
-		else if (std::isdigit(*it))
-		{
-			if (it + 1 != expr.end() && *(it + 1) != ' ')
-				throw RPN::InvalidRPNExpression();
-			this->_exec_stack.push(*it - '0');
-		}
-		else
-			_execOperation(*it);
+		else if (*it != ' ' || it == expr.begin())
+			throw RPN::InvalidRPNExpression();
 		it++;
 	}
 }
