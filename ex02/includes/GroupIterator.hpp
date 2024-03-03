@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 07:20:00 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/27 16:58:07 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/03/03 15:16:02 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,91 +19,43 @@ private:
 	size_t _size;
 
 public:
-	GroupIterator() {};
-	GroupIterator(Iterator it, size_t size) : _it(it), _size(size) {};
-	GroupIterator(GroupIterator<Iterator> const &src) { *this = src; };
-	~GroupIterator() {}
+	GroupIterator();
+	GroupIterator(Iterator it, size_t size);
+	GroupIterator(GroupIterator<Iterator> const &src);
+	~GroupIterator();
 
-	Iterator base() const { return this->_it; }
-	size_t size() const { return this->_size; }
+	Iterator base() const;
+	size_t size() const;
 
-	GroupIterator<Iterator> &operator=(GroupIterator<Iterator> const &rhs)
-	{
-		this->_it = rhs._it;
-		this->_size = rhs._size;
-		return *this;
-	}
-	typename Iterator::value_type &operator*()
-	{
-		return *(this->_it + this->_size - 1);
-	}
-	typename Iterator::value_type operator*() const
-	{
-		return *(this->_it + this->_size - 1);
-	}
-	GroupIterator<Iterator> operator++(int)
-	{
-		GroupIterator cp(*this);
-		this->_it += this->_size;
-		return cp;
-	}
-	GroupIterator<Iterator> operator--(int)
-	{
-		GroupIterator<Iterator> cp(*this);
-		this->_it -= this->_size;
-		return cp;
-	}
-	GroupIterator<Iterator> &operator+=(size_t increment)
-	{
-		this->_it += this->_size * increment;
-		return *this;
-	}
-	GroupIterator<Iterator> &operator-=(size_t increment)
-	{
-		this->_it -= this->_size * increment;
-		return *this;
-	}
-	bool operator==(GroupIterator<Iterator> const &rhs)
-	{
-		return this->_it == rhs._it;
-	}
-	bool operator!=(GroupIterator<Iterator> const &rhs)
-	{
-		return this->_it != rhs._it;
-	}
+	GroupIterator<Iterator> &operator=(GroupIterator<Iterator> const &rhs);
+	typename Iterator::value_type &operator*();
+	typename Iterator::value_type operator*() const;
+	GroupIterator<Iterator> operator++(int);
+	GroupIterator<Iterator> operator--(int);
+	GroupIterator<Iterator> &operator+=(size_t increment);
+	GroupIterator<Iterator> &operator-=(size_t increment);
+	bool operator==(GroupIterator<Iterator> const &rhs);
+	bool operator!=(GroupIterator<Iterator> const &rhs);
 };
 
 template<typename Iterator>
 GroupIterator<Iterator> operator+(
 	GroupIterator<Iterator> it,
-	size_t increment)
-{
-    return it += increment;
-}
+	size_t increment);
 template<typename Iterator>
 GroupIterator<Iterator> operator-(
 	GroupIterator<Iterator> it,
-	size_t increment)
-{
-    return it -= increment;
-}
+	size_t increment);
 template<typename Iterator>
 size_t operator-(
 	GroupIterator<Iterator> const &lhs,
-	GroupIterator<Iterator> const &rhs)
-{
-    return (lhs.base() - rhs.base()) / lhs.size();
-}
+	GroupIterator<Iterator> const &rhs);
 template<typename T, typename Iterator>
 bool operator<(
 	T const &lhs,
-	GroupIterator<Iterator> const &rhs)
-{
-    return lhs < *rhs;
-}
+	GroupIterator<Iterator> const &rhs);
 
 template<typename Iterator>
-void iter_swap(GroupIterator<Iterator> lhs, GroupIterator<Iterator> rhs)
-{
-    std::swap_ranges(lhs.base(), lhs.base() + lhs.size(), rhs.base());
-}
+void iter_swap(GroupIterator<Iterator> lhs, GroupIterator<Iterator> rhs);
+
+#include "GroupIterator.tpp"

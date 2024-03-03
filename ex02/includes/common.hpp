@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 19:44:49 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/28 08:27:44 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/03/03 15:23:30 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,6 @@ void printProcessTime(std::string const &container_name, size_t size, long proce
 bool areContainersEqual(std::vector<int> const &vec, std::deque<int> const &deq);
 
 template<typename Container>
-bool is_sorted(Container const &container)
-{
-	Container newContainer(container);
+bool is_sorted(Container const &container);
 
-	sort(newContainer.begin(), newContainer.end());
-	return container == newContainer;
-}
+#include "common.tpp"

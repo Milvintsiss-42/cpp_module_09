@@ -6,7 +6,7 @@
 /*   By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 02:18:34 by ple-stra          #+#    #+#             */
-/*   Updated: 2024/02/27 13:38:11 by ple-stra         ###   ########.fr       */
+/*   Updated: 2024/03/03 15:27:22 by ple-stra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ PmergeMe &PmergeMe::operator=(PmergeMe const &rhs)
 // }
 
 
-// static void base_sort(
+// static void sort_base(
 // 	std::vector<int> &seq,
 // 	int step)
 // {
@@ -102,10 +102,10 @@ PmergeMe &PmergeMe::operator=(PmergeMe const &rhs)
 // 	}
 // 	if (KDEBUG)
 // 		print_after(seq, step, pairs_count, has_stray_element);
-// 	base_sort(seq, step * 2);
+// 	sort_base(seq, step * 2);
 // }
 
 // void PmergeMe::sort(std::vector<int> &seq)
 // {
-// 	base_sort(seq, 2);
+// 	sort_base(seq, 2);
 // }
