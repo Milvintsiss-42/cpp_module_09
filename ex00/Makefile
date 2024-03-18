@@ -6,22 +6,21 @@
 #    By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/29 15:36:23 by ple-stra          #+#    #+#              #
-#    Updated: 2024/02/25 08:04:20 by ple-stra         ###   ########.fr        #
+#    Updated: 2024/03/18 03:26:29 by ple-stra         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME		= btc
+NAME		:= btc
 
-SRCS_DIR	= srcs
-SRCS		= main.cpp BitcoinExchange.cpp Date.cpp common.cpp
-BUILD_DIR	= build
-OBJ_DIR		= $(BUILD_DIR)/objs
-OBJ			= $(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
-INC			= -I./ -I./includes
+SRCS_DIR	:= srcs
+SRCS		:= main.cpp BitcoinExchange.cpp Date.cpp common.cpp
+BUILD_DIR	:= build
+OBJS_DIR	:= $(BUILD_DIR)/objs
+OBJS		:= $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
+INC			:= -I./includes
 
-CC			= c++
-CFLAGS		= -std=c++98 -Wall -Wextra
-LFLAGS		=
+CC			:= c++
+CFLAGS		:= -std=c++98 -Wall -Wextra
 ifneq (nWerror, $(filter nWerror,$(MAKECMDGOALS)))
 	CFLAGS	+= -Werror
 endif
@@ -34,20 +33,29 @@ endif
 ifeq (debug, $(filter debug,$(MAKECMDGOALS)))
 	CFLAGS	+= -D KDEBUG=1
 endif
+LFLAGS		:=
+DEPDIR		:= $(BUILD_DIR)/deps
+DEPFLAGS	= -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
+DEPFILES 	:= $(SRCS:%.cpp=$(DEPDIR)/%.d)
 
-RM			= rm -rf
+RM			:= rm -rf
 
 all			: $(NAME)
 
-$(OBJ_DIR)/%.o: $(SRCS_DIR)/%.cpp
-	@mkdir -p $(shell dirname $@)
-	$(CC) $(CFLAGS) $(INC) -c $< -o $@
+$(DEPFILES)	:
+include $(wildcard $(DEPFILES))
 
-$(NAME)		: $(OBJ)
-			$(CC) $(CFLAGS) $(INC) -o $(NAME) $(OBJ) $(LFLAGS)
+$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.cpp $(DEPDIR)/%.d
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(DEPFLAGS) $(INC) -c $< -o $@
+
+
+$(NAME)		: $(OBJS)
+			$(CC) $(CFLAGS) $(INC) -o $(NAME) $(OBJS) $(LFLAGS)
 
 clean		:
-			$(RM) $(OBJ_DIR)
+			$(RM) $(OBJS_DIR)
+			$(RM) $(DEPDIR)
 
 fclean		:
 			$(RM) $(BUILD_DIR)
@@ -66,4 +74,4 @@ debug		:
 
 .PHONY: \
  all clean fclean re\
- nWerror sanitize debug g3
+ nWerror sanitize g3 debug
