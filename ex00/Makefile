@@ -6,14 +6,19 @@
 #    By: ple-stra <ple-stra@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/29 15:36:23 by ple-stra          #+#    #+#              #
-#    Updated: 2024/03/18 03:26:29 by ple-stra         ###   ########.fr        #
+#    Updated: 2024/04/09 05:10:35 by ple-stra         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		:= btc
 
 SRCS_DIR	:= srcs
-SRCS		:= main.cpp BitcoinExchange.cpp Date.cpp common.cpp
+SRCS		:= $(addsuffix .cpp, \
+	main \
+	BitcoinExchange \
+	Date \
+	common \
+ )
 BUILD_DIR	:= build
 OBJS_DIR	:= $(BUILD_DIR)/objs
 OBJS		:= $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
@@ -45,7 +50,9 @@ all			: $(NAME)
 $(DEPFILES)	:
 include $(wildcard $(DEPFILES))
 
-$(OBJS_DIR)/%.o : $(SRCS_DIR)/%.cpp $(DEPDIR)/%.d
+$(DEPDIR)/%.d	: ; @mkdir -p $(dir $@)
+
+$(OBJS_DIR)/%.o	: $(SRCS_DIR)/%.cpp $(DEPDIR)/%.d | $(DEPDIR)/%.d
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(DEPFLAGS) $(INC) -c $< -o $@
 
@@ -61,7 +68,9 @@ fclean		:
 			$(RM) $(BUILD_DIR)
 			$(RM) $(NAME)
 
-re			: fclean all
+re			:
+	@$(MAKE) --no-print-directory fclean
+	@$(MAKE) --no-print-directory all $(filter-out re,$(MAKECMDGOALS))
 
 nWerror		:
 			@echo "WARN: Compiling without Werror flag!"
